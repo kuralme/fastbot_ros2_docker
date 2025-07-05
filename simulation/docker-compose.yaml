@@ -1,0 +1,55 @@
+version: '3'
+services:
+  fastbot-ros2-gazebo:
+    image: kuralme/fastbot-ros2-gazebo
+    pull_policy: always
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile.gazebo
+    container_name: fastbot-ros2-gazebo
+    network_mode: host
+    environment:
+      - ROBOT_NAME=fastbot
+      - ROS_DOMAIN_ID=1
+      - DISPLAY=${DISPLAY}
+      - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+      - CYCLONEDDS_URI=/var/lib/theconstruct.rrl/cyclonedds.xml
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    restart: always
+  
+  fastbot-ros2-slam:
+    image: kuralme/fastbot-ros2-slam
+    pull_policy: always
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile.slam
+    container_name: fastbot-ros2-slam
+    network_mode: host
+    environment:
+      - ROBOT_NAME=fastbot
+      - ROS_DOMAIN_ID=1
+      - DISPLAY=${DISPLAY}
+      - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+      - CYCLONEDDS_URI=/var/lib/theconstruct.rrl/cyclonedds.xml
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    restart: always
+    
+  fastbot-ros2-webapp:
+    image: kuralme/fastbot-ros2-webapp
+    pull_policy: always
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile.webapp
+    container_name: fastbot-ros2-webapp
+    network_mode: host
+    environment:
+      - ROBOT_NAME=fastbot
+      - ROS_DOMAIN_ID=1
+      - DISPLAY=${DISPLAY}
+      - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+      - CYCLONEDDS_URI=/var/lib/theconstruct.rrl/cyclonedds.xml
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    restart: always
