@@ -1,0 +1,20 @@
+FROM nvidia_ros2:latest
+
+# Change the default shell to Bash
+SHELL [ "/bin/bash" , "-c" ]
+
+# Create an overlay workspace
+RUN mkdir -p /colcon_ws/src
+COPY ./fastbot_gazebo /colcon_ws/src/fastbot_gazebo
+COPY ./fastbot_description /colcon_ws/src/fastbot_description
+
+# Add models to the gazebo path
+# ENV GAZEBO_MODEL_PATH=/colcon_ws/install/fastbot_description/share/fastbot_description/models:/colcon_ws/install/fastbot_description/share/fastbot_description/onshape/assets:${GAZEBO_MODEL_PATH}
+# ENV GAZEBO_RESOURCE_PATH=/colcon_ws/install/fastbot_description/share/fastbot_description/models/meshes:/colcon_ws/install/fastbot_description/share/fastbot_description/onshape/assets:${GAZEBO_RESOURCE_PATH}
+
+RUN source /opt/ros/humble/setup.bash \
+ && cd /colcon_ws \
+ && colcon build
+
+# Set up the work directory and entrypoint
+WORKDIR /colcon_ws

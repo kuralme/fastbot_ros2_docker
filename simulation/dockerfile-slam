@@ -1,0 +1,26 @@
+FROM ros:humble-ros-base-jammy
+
+# Change the default shell to Bash
+SHELL [ "/bin/bash" , "-c" ]
+
+RUN apt update && apt upgrade -y && apt install -y \
+    python3-colcon-common-extensions \
+    ros-humble-rviz2 \
+    ros-humble-nav2-msgs \
+    ros-humble-nav2-amcl \
+    ros-humble-nav2-map-server \
+    ros-humble-nav2-planner \
+    ros-humble-nav2-bringup \
+    ros-humble-nav2-bt-navigator \
+    ros-humble-cartographer-ros \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create a ROS2 workspace and build
+RUN mkdir -p /colcon_ws/src
+COPY ./fastbot_slam /colcon_ws/src/fastbot_slam
+RUN source /opt/ros/humble/setup.bash \
+ && cd /colcon_ws \
+ && colcon build
+
+# Set up the work directory and entrypoint
+WORKDIR /colcon_ws
