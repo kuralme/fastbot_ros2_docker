@@ -1,0 +1,15 @@
+FROM ros:humble-ros-base-jammy
+
+# Change the default shell to Bash
+SHELL [ "/bin/bash" , "-c" ]
+
+RUN apt-get update && apt-get upgrade -y && \
+    apt-get install -y ros-humble-rosbridge-* && \
+    rm -rf /var/lib/apt/lists/*
+
+# Create a ROS2 webpage workspace
+RUN mkdir -p /webpage_ws
+COPY ./fastbot_webapp /webpage_ws/fastbot_webapp
+
+# Set up the work directory
+WORKDIR /webpage_ws/fastbot_webapp

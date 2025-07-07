@@ -22,5 +22,5 @@ RUN source /opt/ros/humble/setup.bash \
  && cd /colcon_ws \
  && colcon build
 
-# Set up the work directory and entrypoint
+# Set up the work directory
 WORKDIR /colcon_ws
