@@ -8,10 +8,12 @@ services:
       - ROS_DOMAIN_ID=0
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
+    privileged: true
     networks:
       - fastbot-network
     restart: always
-    entrypoint: ["/bin/bash", "-c", "source install/setup.bash && ros2 launch fastbot_gazebo one_fastbot_room.launch.py"]
+    entrypoint: ["/bin/bash", "-c"]
+    command: ["source install/setup.bash && ros2 launch fastbot_gazebo one_fastbot_room.launch.py"]
   
   fastbot-ros2-slam:
     image: kuralme/kuralme-cp22:fastbot-ros2-slam
@@ -21,26 +23,32 @@ services:
       - ROS_DOMAIN_ID=0
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
+    privileged: true
     networks:
       - fastbot-network
     restart: always
-    entrypoint: ["/bin/bash", "-c", "sleep 20 && source install/setup.bash && ros2 launch fastbot_slam navigation.launch.py"]
+    entrypoint: ["/bin/bash", "-c"]
+    command: ["sleep 20 && source install/setup.bash && ros2 launch fastbot_slam navigation.launch.py"]
   
   fastbot-ros2-webapp:
-    image: fastbot-ros2-webapp
+    image: kuralme/kuralme-cp22:fastbot-ros2-webapp
     container_name: fastbot-ros2-webapp
+    hostname: fastbot-ros2-webapp
+    privileged: true
     environment:
       - ROS_DOMAIN_ID=0
-      # - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
-      # - CYCLONEDDS_URI=/var/lib/theconstruct.rrl/cyclonedds.xml
+    volumes:
+      - ~/home/user/webpage_ws/fastbot_webapp:/usr/share/nginx/html:ro
+      - logs:/var/log/nginx
     networks:
       - fastbot-network
-    restart: always
     ports:
-      - "7000:7000"  # Expose HTTP server port
-      - "9090:9090"  # Expose rosbridge websocket port
-    entrypoint: ["/bin/bash", "-c", "sleep 22 && source /opt/ros/humble/setup.bash && ros2 launch rosbridge_server rosbridge_websocket_launch.xml & python3 -m http.server 7000"]
+      - "7000:80"
+      - "9090:9090"
+    restart: always
 
+volumes:
+  logs: {}
 networks:
   fastbot-network:
     driver: bridge

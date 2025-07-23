@@ -3,13 +3,23 @@ FROM ros:humble-ros-base-jammy
 # Change the default shell to Bash
 SHELL [ "/bin/bash" , "-c" ]
 
-RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y ros-humble-rosbridge-* && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get upgrade -y \
+    && apt-get install -y nginx ros-humble-rosbridge-suite \
+    && rm -rf /var/lib/apt/lists/*
 
-# Create a ROS2 webpage workspace
-RUN mkdir -p /webpage_ws
-COPY ./fastbot_webapp /webpage_ws/fastbot_webapp
+# Copying the local entrypoint.sh file to /entrypoint.sh in the docker image
+COPY ./entrypoint.sh /entrypoint.sh
+
+# Copying the local to /var/www/html in the docker image
+COPY ./fastbot_webapp /var/www/html
+COPY ./nginx.conf /etc/nginx/sites-available/
+RUN ln -sf /etc/nginx/sites-available/nginx.conf /etc/nginx/sites-enabled/
+
+# /bin/bash is the command we want to execute when running a docker container
+ENTRYPOINT ["/bin/bash"]
+
+# We want /bin/bash to execute our /entrypoint.sh when container starts
+CMD ["/entrypoint.sh"]
 
 # Set up the work directory
-WORKDIR /webpage_ws/fastbot_webapp
+WORKDIR /var/www/html
