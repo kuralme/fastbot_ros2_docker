@@ -1,7 +1,7 @@
-FROM ros:humble-ros-base-jammy
-
+FROM arm64v8/ros:humble-ros-base-jammy
 SHELL [ "/bin/bash" , "-c" ]
 
+# Install system and ROS 2 dependencies
 RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     python3-colcon-common-extensions \
     ros-humble-rviz2 \
@@ -12,14 +12,11 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     ros-humble-nav2-bringup \
     ros-humble-nav2-bt-navigator \
     ros-humble-cartographer-ros \
+    ros-humble-rmw-cyclonedds-cpp \
     && rm -rf /var/lib/apt/lists/*
 
 # Create a ROS2 workspace and build
 RUN mkdir -p /colcon_ws/src
 COPY ./fastbot_slam /colcon_ws/src/fastbot_slam
 RUN source /opt/ros/humble/setup.bash \
- && cd /colcon_ws \
- && colcon build
-
-# Set up the work directory
-WORKDIR /colcon_ws
+ && cd /colcon_ws && colcon build

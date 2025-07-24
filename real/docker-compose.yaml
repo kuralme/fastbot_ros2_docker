@@ -5,16 +5,19 @@ services:
     container_name: fastbot-ros2-real
     environment:
       - ROS_DOMAIN_ID=0
-    devices:
-      - /dev/video0
-      - /dev/lslidar
-      - /dev/arduino_nano
+      - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+      - CYCLONEDDS_URI=/var/lib/theconstruct.rrl/cyclonedds.xml
+    volumes:
+      - /dev/video0:/dev/video0
+      - /dev/lslidar:/dev/lslidar
+      - /dev/arduino_nano:/dev/arduino_nano
+      - ./ros_entrypoint.sh:/ros_entrypoint.sh
+      - /var/lib/theconstruct.rrl/cyclonedds.xml:/var/lib/theconstruct.rrl/cyclonedds.xml
     privileged: true
-    networks:
-      - fastbot-network
+    network_mode: host
     restart: always
-    entrypoint: ["/bin/bash", "-c"]
-    command: ["source install/setup.bash && ros2 launch fastbot_bringup bringup.launch.xml"]
+    entrypoint: /ros_entrypoint.sh
+    command: ["ros2 launch fastbot_bringup bringup.launch.xml"]
   
   fastbot-ros2-slam:
     image: kuralme/kuralme-cp22:fastbot-ros2-real-slam
@@ -22,15 +25,14 @@ services:
     environment:
       - DISPLAY=${DISPLAY}
       - ROS_DOMAIN_ID=0
+      - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+      - CYCLONEDDS_URI=/var/lib/theconstruct.rrl/cyclonedds.xml
     volumes:
+      - ./ros_entrypoint.sh:/ros_entrypoint.sh
+      - /var/lib/theconstruct.rrl/cyclonedds.xml:/var/lib/theconstruct.rrl/cyclonedds.xml
       - /tmp/.X11-unix:/tmp/.X11-unix
     privileged: true
-    networks:
-      - fastbot-network
+    network_mode: host
     restart: always
-    entrypoint: ["/bin/bash", "-c"]
-    command: ["sleep 8 && source install/setup.bash && ros2 launch fastbot_slam navigation.launch.py"]
-
-networks:
-  fastbot-network:
-    driver: bridge
+    entrypoint: /ros_entrypoint.sh
+    command: ["sleep 8 && ros2 launch fastbot_slam navigation.launch.py"]

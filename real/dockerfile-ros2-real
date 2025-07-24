@@ -1,5 +1,4 @@
-FROM ros:humble-ros-base-jammy
-
+FROM arm64v8/ros:humble-ros-base-jammy
 SHELL [ "/bin/bash" , "-c" ]
 
 # Install system and ROS 2 dependencies
@@ -12,6 +11,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     libboost-all-dev \
     libpcap-dev \
     libpcl-dev \
+    v4l-utils \
     ros-humble-xacro \
     ros-humble-tf2* \
     ros-humble-joint-state-publisher \
@@ -20,7 +20,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     ros-humble-diagnostic-updater \
     ros-humble-v4l2-camera \
     ros-humble-image-transport-plugins \
-    v4l-utils \
+    ros-humble-rmw-cyclonedds-cpp \
     && rm -rf /var/lib/apt/lists/*
 
 # Install motor driver dependencies
@@ -30,5 +30,3 @@ RUN python3 -m pip install pyserial
 RUN mkdir -p /colcon_ws/src
 COPY ./fastbot /colcon_ws/src/fastbot
 RUN source /opt/ros/humble/setup.bash && cd /colcon_ws && colcon build --symlink-install
-
-WORKDIR /colcon_ws
