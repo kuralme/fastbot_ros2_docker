@@ -38,7 +38,6 @@ services:
     environment:
       - ROS_DOMAIN_ID=0
     volumes:
-      - ~/home/user/webpage_ws/fastbot_webapp:/usr/share/nginx/html:ro
       - logs:/var/log/nginx
     networks:
       - fastbot-network
