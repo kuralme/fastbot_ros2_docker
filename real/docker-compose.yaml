@@ -1,6 +1,6 @@
 version: '3'
 services:
-  fastbot-ros2-gazebo:
+  fastbot-ros2-real:
     image: kuralme/kuralme-cp22:fastbot-ros2-real
     container_name: fastbot-ros2-real
     environment:
@@ -19,7 +19,7 @@ services:
     entrypoint: /ros_entrypoint.sh
     command: ["ros2 launch fastbot_bringup bringup.launch.xml"]
   
-  fastbot-ros2-slam:
+  fastbot-ros2-real-slam:
     image: kuralme/kuralme-cp22:fastbot-ros2-real-slam
     container_name: fastbot-ros2-real-slam
     environment:
@@ -35,4 +35,4 @@ services:
     network_mode: host
     restart: always
     entrypoint: /ros_entrypoint.sh
-    command: ["sleep 8 && ros2 launch fastbot_slam navigation.launch.py"]
+    command: ["sleep 8 && ros2 launch fastbot_slam cartographer.launch.py"]
